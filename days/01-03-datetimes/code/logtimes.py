@@ -1,21 +1,22 @@
 from datetime import datetime
-from datetime import timedelta
 import os
 import urllib.request
 
-SHUTDOWN_EVENT = "Shutdown initiated"
+SHUTDOWN_EVENT = 'Shutdown initiated'
 
 # prep: read in the logfile
 tmp = os.getenv("TMP", "/tmp")
-logfile = os.path.join(tmp, "log")
+logfile = os.path.join(tmp, 'log')
 urllib.request.urlretrieve(
-    "https://bites-data.s3.us-east-2.amazonaws.com/messages.log", logfile
+    'https://bites-data.s3.us-east-2.amazonaws.com/messages.log',
+    logfile
 )
-
 
 with open(logfile) as f:
     loglines = f.readlines()
 
+
+# for you to code:
 
 def convert_to_datetime(line):
     """TODO 1:
@@ -25,14 +26,9 @@ def convert_to_datetime(line):
        returns:
        datetime(2014, 7, 3, 23, 27, 51)
     """
-
-    # each line seems prefixed with "INFO", "WARNING " or "ERROR "
-    # Find the first space and the timestamp is the next 19 chars
-    fmt_string = "%Y-%m-%dT%H:%M:%S"
-    string_len = 19
-    start_char = line.find(" ") + 1
-    date_string = line[start_char : start_char + string_len]
-    return datetime.strptime(date_string, fmt_string)
+    timestamp = line.split()[1]
+    date_str = '%Y-%m-%dT%H:%M:%S'
+    return datetime.strptime(timestamp, date_str)
 
 
 def time_between_shutdowns(loglines):
@@ -41,18 +37,6 @@ def time_between_shutdowns(loglines):
        calculate the timedelta between the first and last one.
        Return this datetime.timedelta object.
     """
-    shutdown_events = []
-    for line in loglines:
-        if SHUTDOWN_EVENT in line:
-            shutdown_events.append(line)
-
-    if len(shutdown_events) < 2:
-        return timedelta(days=0)
-    else:
-        return convert_to_datetime(shutdown_events[-1]) - convert_to_datetime(
-            shutdown_events[0]
-        )
-
-
-if __name__ == "__main__":
-    print(time_between_shutdowns(loglines))
+    shutdown_entries = [line for line in loglines if SHUTDOWN_EVENT in line]
+    shutdown_times = [convert_to_datetime(event) for event in shutdown_entries]
+    return max(shutdown_times) - min(shutdown_times)

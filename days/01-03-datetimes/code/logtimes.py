@@ -40,3 +40,7 @@ def time_between_shutdowns(loglines):
     shutdown_entries = [line for line in loglines if SHUTDOWN_EVENT in line]
     shutdown_times = [convert_to_datetime(event) for event in shutdown_entries]
     return max(shutdown_times) - min(shutdown_times)
+
+
+if __name__ == '__main__':
+    print(time_between_shutdowns(loglines))

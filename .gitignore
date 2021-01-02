@@ -115,3 +115,6 @@ rock_paper_scissors.sqlite
 **.DS_Store
 
 days/04-06-collections/*.csv
+
+# VsCode
+.vscode

@@ -2,6 +2,7 @@ import csv
 from collections import defaultdict, namedtuple
 import os
 from urllib.request import urlretrieve
+from pathlib import Path
 
 """
 From PyBites Bite 30: https://codechalleng.es/bites/30/
@@ -9,10 +10,12 @@ From PyBites Bite 30: https://codechalleng.es/bites/30/
 
 BASE_URL = 'https://bites-data.s3.us-east-2.amazonaws.com/'
 TMP = '/tmp'
+base_dir = Path(__file__).resolve().parent
 
 fname = 'movie_metadata.csv'
 remote = os.path.join(BASE_URL, fname)
-local = os.path.join(TMP, fname)
+# local = os.path.join(TMP, fname)
+local = base_dir / fname
 urlretrieve(remote, local)
 
 MOVIE_DATA = local
@@ -27,7 +30,7 @@ def get_movies_by_director():
     where keys are directors, and values are a list of movies,
     use the defined Movie namedtuple"""
     movies = defaultdict(list)
-    with open(MOVIE_DATA, newline='') as csvfile:
+    with open(MOVIE_DATA, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             try:

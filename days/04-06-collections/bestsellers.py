@@ -1,7 +1,6 @@
 import csv
 from collections import defaultdict, namedtuple, Counter
 from pathlib import Path
-from pprint import pprint as pp
 
 base_dir = Path(__file__).resolve().parent
 
@@ -35,22 +34,40 @@ def get_books_by_author():
         return books
 
 
-def get_multiyear_books(books):
+def get_book_count(books):
     """
         Get books that have been bestsellers in more than one year"""
-    multi_books = defaultdict(list)
     cnt = Counter()
     for author, books in books.items():
-        cnt.clear()
         for book in books:
-            cnt[book.name] += 1
-        for book, count in cnt.items():
-            if count > 1:
-                multi_books[author].append(book)
-    return multi_books
+            cnt[(author, book.name)] += 1
+    return cnt
+
+    # multi_books = defaultdict(list)
+    # cnt = Counter()
+    # for author, books in books.items():
+    #     cnt.clear()
+    #     for book in books:
+    #         cnt[book.name] += 1
+    #     for book, count in cnt.items():
+    #         if count > 1:
+    #             multi_books[author].append(book)
+    # return multi_books
+
+
+def print_n_most_common_books(books, book_count, n_most_common=3):
+    years = defaultdict(list)
+    for (author, book_name), count in book_count.most_common(n_most_common):
+        print(author)
+        years.clear()
+        for book in sorted(books[author], key=lambda x: x.year):
+            if book.name == book_name:
+                years[book_name].append(book.year)
+        print("\t", book_name)
+        print(f'\t{years[book_name]} {count=}')
 
 
 if __name__ == '__main__':
     books = get_books_by_author()
-    mbooks = get_multiyear_books(books)
-    pp(mbooks)
+    book_count = get_book_count(books)
+    print_n_most_common_books(books, book_count, 10)

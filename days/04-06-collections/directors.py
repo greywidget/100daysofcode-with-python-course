@@ -16,7 +16,8 @@ fname = 'movie_metadata.csv'
 remote = os.path.join(BASE_URL, fname)
 # local = os.path.join(TMP, fname)
 local = base_dir / fname
-urlretrieve(remote, local)
+if not local.exists():
+    urlretrieve(remote, local)
 
 MOVIE_DATA = local
 MIN_MOVIES = 4

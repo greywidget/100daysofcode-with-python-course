@@ -43,17 +43,6 @@ def get_book_count(books):
             cnt[(author, book.name)] += 1
     return cnt
 
-    # multi_books = defaultdict(list)
-    # cnt = Counter()
-    # for author, books in books.items():
-    #     cnt.clear()
-    #     for book in books:
-    #         cnt[book.name] += 1
-    #     for book, count in cnt.items():
-    #         if count > 1:
-    #             multi_books[author].append(book)
-    # return multi_books
-
 
 def print_n_most_common_books(books, book_count, n_most_common=3):
     years = defaultdict(list)

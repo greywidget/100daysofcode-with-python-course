@@ -11,5 +11,8 @@
  - Straightforward but interesting use of chain.from_iterables to flatten a list of lists. Also the more obscure `sum(cars.values(), [])`
  - I hadn't really used `max()` before with - nb how it can take an **iterable** and you can specify a `key=func` which is used to derive the value for the ordering, in this case we used `max`. Also we were able to pass either a list or a dict to the `get_longest_state()` function and it worked fine with either - no type checking required.
  ## 10-12. pytest.  
- - Some great examples of simple games and how to test them. Need to go back and look at this more carefully. 
+ - Some great examples of simple games and how to test them. Need to go back and look at this more carefully.
+ - I quite like the way Bob used `num_guesses == 1 and "guess" or "guesses"` to decide whether the text should be **guess** or **guesses**
+ - Nb I had a lot of trouble in one of my attempted examples to mock `datetime.datetime`. I believe you can't just mock it out globally, mainly because `datetime.datetime` is written in `C` so Mock can't replace attributes on the class. [the docs](https://docs.python.org/3/library/unittest.mock-examples.html#partial-mocking) has a section on Partial Mocking which talks about this. The solution I believe is to create a **mock** object in the module under test. I should go back and play with this more. In the end I abandoned my example due to time constraints.
+ - Further to the above, there was a useful PyBites post on the subject: [freezegun](https://pybit.es/guest-freezegun.html) which also has some other helpful links
  

@@ -15,4 +15,6 @@
  - I quite like the way Bob used `num_guesses == 1 and "guess" or "guesses"` to decide whether the text should be **guess** or **guesses**
  - Nb I had a lot of trouble in one of my attempted examples to mock `datetime.datetime`. I believe you can't just mock it out globally, mainly because `datetime.datetime` is written in `C` so Mock can't replace attributes on the class. [the docs](https://docs.python.org/3/library/unittest.mock-examples.html#partial-mocking) has a section on Partial Mocking which talks about this. The solution I believe is to create a **mock** object in the module under test. I should go back and play with this more. In the end I abandoned my example due to time constraints.
  - Further to the above, there was a useful PyBites post on the subject: [freezegun](https://pybit.es/guest-freezegun.html) which also has some other helpful links
+ - For the coverage, first run `pytest` then run `pytest --cov-report term-missing --cov=.`   **Run from inside the directory**
+
  

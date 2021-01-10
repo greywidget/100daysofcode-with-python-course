@@ -5,7 +5,7 @@ test with:
     pytest test_patch.py
 
 test coverage with:
-    pytest --cov-report term-missing --cov='.'
+    pytest --cov-report term-missing --cov=.
     (requires pytest-cov package installed)
 """
 

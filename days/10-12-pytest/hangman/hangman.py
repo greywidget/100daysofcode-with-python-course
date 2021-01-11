@@ -1,5 +1,8 @@
+import click
 import random
 import string
+
+MAX_GUESSES = 7
 
 WORDS = """
 blender microwave stove pots pans kettle sink knives cutlery
@@ -18,9 +21,12 @@ class Game:
 
     def __init__(self):
         self._guesses = set()
+        self._bad_guesses = 0
         self._answer = choose_random_word()
         self._win = False
         self._outword = list('_' * len(self._answer))
+        self._message = ''
+        self._hm = self._get_gallows()
 
     def _update_word(self, guess):
         for pos, letter in enumerate(self._answer):
@@ -56,12 +62,27 @@ class Game:
            {guess} is not in the word
            Return a boolean"""
         if guess in self._answer:
-            print(f"{guess} is correct!")
+            self._message = f"{guess} is correct!"
             self._update_word(guess)
             return True
         else:
-            print(f"Sorry, {guess} is a bad guess")
+            self._bad_guesses += 1
+            self._message = f"Sorry, {guess} is a bad guess"
             return False
+
+    def _draw(self, stage=0):
+        """
+        Draw the gallows and hangman, in stages.
+        This isn't really an important part of the game, so for now I'm
+        keeping it simple.
+        first stage = just the gallows.
+        last stage = you've been hung!
+        """
+
+        click.clear()
+        click.secho(''.join(self._outword), fg='green', nl=False)
+        click.secho(self._hm[stage], fg='red')
+        click.secho(self._message, fg='blue')
 
     @property
     def num_guesses(self):
@@ -69,15 +90,134 @@ class Game:
 
     def __call__(self):
         """Entry point/game loop, use a loop break/continue"""
-        while self._answer != ''.join(self._outword):
+        click.clear()
+        while self._bad_guesses < MAX_GUESSES:
+            self._draw(stage=self._bad_guesses)
+
             try:
                 guess = self.guess()
                 self._validate_guess(guess)
             except ValueError as ve:
-                print(ve)
+                self._message = str(ve)
                 continue
 
-        print(f"You guessed it! The word was {self._answer}")
+            win = self._answer == ''.join(self._outword)
+            if win:
+                self._message = (
+                    f'You win, it took you {self.num_guesses} guesses')
+                self._win = True
+                break
+        else:
+            # else on while/for = anti-pattern? do find it useful in this case!
+            self._message = 'Sorry you have been HUNG'
+
+        self._draw(stage=self._bad_guesses)
+        click.secho("The answer was ", fg='blue', nl=False)
+        click.secho(self._answer, fg='green')
+
+    def _get_gallows(self):
+        """
+        Very basic stick figures for the gallows
+        """
+
+        hm = ['' for _ in range(8)]
+
+        hm[0] = \
+            """
+        ____
+        |  |
+        |
+        |
+        |
+        |
+        |
+        |
+        -------"""
+
+        hm[1] = \
+            """
+        ____
+        |  |
+        |  O
+        |
+        |
+        |
+        |
+        |
+        -------"""
+
+        hm[2] = \
+            """
+        ____
+        |  |
+        |  O
+        |  |
+        |
+        |
+        |
+        |
+        -------"""
+
+        hm[3] = \
+            """
+        ____
+        |  |
+        |  O
+        | /|
+        |
+        |
+        |
+        |
+        -------"""
+
+        hm[4] = \
+            """
+        ____
+        |  |
+        |  O
+        | /|\\
+        |
+        |
+        |
+        |
+        -------"""
+
+        hm[5] = \
+            """
+        ____
+        |  |
+        |  O
+        | /|\\
+        |  |
+        |
+        |
+        |
+        -------"""
+
+        hm[6] = \
+            """
+        ____
+        |  |
+        |  O
+        | /|\\
+        |  |
+        | /
+        |
+        |
+        -------"""
+
+        hm[7] = \
+            """
+        ____
+        |  |
+        |  O
+        | /|\\
+        |  |
+        | / \\
+        |
+        |
+        -------"""
+        return hm
 
 
 if __name__ == '__main__':

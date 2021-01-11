@@ -103,8 +103,10 @@ class Game:
 
             win = self._answer == ''.join(self._outword)
             if win:
+                left = MAX_GUESSES - self._bad_guesses
+                life_str = left == 1 and 'life' or 'lives'
                 self._message = (
-                    f'You win, it took you {self.num_guesses} guesses')
+                    f'You win, you had {left} {life_str} remaining')
                 self._win = True
                 break
         else:
@@ -112,8 +114,9 @@ class Game:
             self._message = 'Sorry you have been HUNG'
 
         self._draw(stage=self._bad_guesses)
-        click.secho("The answer was ", fg='blue', nl=False)
-        click.secho(self._answer, fg='green')
+        if not self._win:
+            click.secho("The answer was ", fg='blue', nl=False)
+            click.secho(self._answer, fg='green')
 
     def _get_gallows(self):
         """
